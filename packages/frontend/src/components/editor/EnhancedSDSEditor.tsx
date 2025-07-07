@@ -36,18 +36,27 @@ const lowlight = createLowlight(common);
 // 样式组件
 const EditorContainer = styled.div`
   display: flex;
-  height: 100vh;
+  flex: 1;
+  width: 100%;
+  height: 100%;
   background: #fafafa;
+  overflow: hidden;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
 `;
 
 const EditorPanel = styled.div<{ isPreview?: boolean }>`
-  flex: ${props => props.isPreview ? '1' : '1'};
+  flex: 1;
   display: flex;
   flex-direction: column;
   background: white;
-  border-right: ${props => props.isPreview ? '1px solid #e8e8e8' : 'none'};
   position: relative;
   z-index: 1;
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  width: 100%;
 `;
 
 const Toolbar = styled.div`
@@ -57,21 +66,26 @@ const Toolbar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: relative;
+  position: sticky; // 使工具栏固定在顶部
+  top: 0;
   z-index: 10;
   flex-shrink: 0;
+  min-height: 56px; // 确保工具栏有最小高度
+  width: 100%; // 确保工具栏占满宽度
 `;
 
 const ToolbarLeft = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0; // 防止被压缩
 `;
 
 const ToolbarRight = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0; // 防止被压缩
 `;
 
 const Sidebar = styled.div`
@@ -79,25 +93,47 @@ const Sidebar = styled.div`
   background: white;
   border-right: 1px solid #e8e8e8;
   overflow-y: auto;
+  flex-shrink: 0; // 防止侧边栏被压缩
+  height: 100%; // 确保占满容器高度
 `;
 
 const EditorContentWrapper = styled.div`
   flex: 1;
   padding: 20px;
   overflow-y: auto;
+  overflow-x: auto;
   position: relative;
   z-index: 1;
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
   
   .ProseMirror {
     outline: none;
     min-height: 100%;
+    height: 100%;
+    width: 100%;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
     color: #333;
+    word-wrap: break-word;
+    word-break: break-word;
+    white-space: pre-wrap;
+    max-width: 100%;
+    flex: 1;
+    overflow-y: auto;
+    box-sizing: border-box;
+    min-width: 0;
   }
   
   .ProseMirror p {
     margin: 0 0 16px 0;
+    word-wrap: break-word; // 段落文本自动换行
+    word-break: break-word;
   }
   
   .ProseMirror h1,
@@ -109,6 +145,8 @@ const EditorContentWrapper = styled.div`
     margin: 24px 0 16px 0;
     font-weight: 600;
     line-height: 1.25;
+    word-wrap: break-word; // 标题文本自动换行
+    word-break: break-word;
   }
   
   .ProseMirror h1 { font-size: 2em; }
@@ -126,6 +164,8 @@ const EditorContentWrapper = styled.div`
   
   .ProseMirror li {
     margin: 8px 0;
+    word-wrap: break-word; // 列表项文本自动换行
+    word-break: break-word;
   }
   
   .ProseMirror blockquote {
@@ -133,6 +173,8 @@ const EditorContentWrapper = styled.div`
     padding: 0 16px;
     border-left: 4px solid #e8e8e8;
     color: #666;
+    word-wrap: break-word; // 引用文本自动换行
+    word-break: break-word;
   }
   
   .ProseMirror code {
@@ -141,25 +183,30 @@ const EditorContentWrapper = styled.div`
     border-radius: 3px;
     font-family: 'Courier New', monospace;
     font-size: 0.9em;
+    word-break: break-all; // 代码文本强制换行
   }
   
   .ProseMirror pre {
     background: #f5f5f5;
     padding: 16px;
     border-radius: 6px;
-    overflow-x: auto;
+    overflow-x: auto; // 代码块水平滚动
     margin: 16px 0;
+    word-wrap: break-word;
+    word-break: break-word;
   }
   
   .ProseMirror pre code {
     background: none;
     padding: 0;
+    word-break: break-all; // 代码块内文本强制换行
   }
   
   .ProseMirror table {
     border-collapse: collapse;
     width: 100%;
     margin: 16px 0;
+    table-layout: fixed; // 固定表格布局
   }
   
   .ProseMirror table th,
@@ -167,6 +214,9 @@ const EditorContentWrapper = styled.div`
     border: 1px solid #e8e8e8;
     padding: 8px 12px;
     text-align: left;
+    word-wrap: break-word; // 表格单元格文本自动换行
+    word-break: break-word;
+    vertical-align: top; // 顶部对齐
   }
   
   .ProseMirror table th {
@@ -178,6 +228,8 @@ const EditorContentWrapper = styled.div`
     background: #fff3cd;
     padding: 2px 4px;
     border-radius: 3px;
+    word-wrap: break-word;
+    word-break: break-word;
   }
   
   .ProseMirror .is-editor-empty:first-child::before {
@@ -193,12 +245,19 @@ const PreviewPanel = styled.div`
   flex: 1;
   padding: 20px;
   overflow-y: auto;
+  overflow-x: auto;
   background: white;
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  width: 100%;
   
   h1, h2, h3, h4, h5, h6 {
     margin: 24px 0 16px 0;
     font-weight: 600;
     line-height: 1.25;
+    word-wrap: break-word; // 标题文本自动换行
+    word-break: break-word;
   }
   
   h1 { font-size: 2em; }
@@ -208,20 +267,30 @@ const PreviewPanel = styled.div`
   h5 { font-size: 0.875em; }
   h6 { font-size: 0.85em; }
   
-  p { margin: 0 0 16px 0; }
+  p { 
+    margin: 0 0 16px 0; 
+    word-wrap: break-word; // 段落文本自动换行
+    word-break: break-word;
+  }
   
   ul, ol {
     margin: 16px 0;
     padding-left: 24px;
   }
   
-  li { margin: 8px 0; }
+  li { 
+    margin: 8px 0; 
+    word-wrap: break-word; // 列表项文本自动换行
+    word-break: break-word;
+  }
   
   blockquote {
     margin: 16px 0;
     padding: 0 16px;
     border-left: 4px solid #e8e8e8;
     color: #666;
+    word-wrap: break-word; // 引用文本自动换行
+    word-break: break-word;
   }
   
   code {
@@ -230,25 +299,30 @@ const PreviewPanel = styled.div`
     border-radius: 3px;
     font-family: 'Courier New', monospace;
     font-size: 0.9em;
+    word-break: break-all; // 代码文本强制换行
   }
   
   pre {
     background: #f5f5f5;
     padding: 16px;
     border-radius: 6px;
-    overflow-x: auto;
+    overflow-x: auto; // 代码块水平滚动
     margin: 16px 0;
+    word-wrap: break-word;
+    word-break: break-word;
   }
   
   pre code {
     background: none;
     padding: 0;
+    word-break: break-all; // 代码块内文本强制换行
   }
   
   table {
     border-collapse: collapse;
     width: 100%;
     margin: 16px 0;
+    table-layout: fixed; // 固定表格布局
   }
   
   table th,
@@ -256,6 +330,9 @@ const PreviewPanel = styled.div`
     border: 1px solid #e8e8e8;
     padding: 8px 12px;
     text-align: left;
+    word-wrap: break-word; // 表格单元格文本自动换行
+    word-break: break-word;
+    vertical-align: top; // 顶部对齐
   }
   
   table th {
@@ -263,10 +340,13 @@ const PreviewPanel = styled.div`
     font-weight: 600;
   }
   
+  // 语义块样式
   .semantic-block {
     margin: 20px 0;
     padding: 15px;
     border-radius: 5px;
+    word-wrap: break-word; // 语义块文本自动换行
+    word-break: break-word;
   }
   
   .semantic-block.info {

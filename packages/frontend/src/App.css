@@ -24,7 +24,7 @@
   opacity: 0.9;
 }
 
-main {
+.App main {
   max-width: 600px;
   padding: 2rem;
   background: rgba(255, 255, 255, 0.1);

@@ -19,6 +19,12 @@ const { Header, Sider, Content } = Layout;
 
 const StyledLayout = styled(Layout)`
   height: 100vh;
+  width: 100vw;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 `;
 
 const StyledHeader = styled(Header)`
@@ -28,40 +34,65 @@ const StyledHeader = styled(Header)`
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  position: relative;
-  z-index: 5;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 64px;
+  flex-shrink: 0;
+  min-width: 800px;
 `;
 
 const HeaderLeft = styled.div`
   display: flex;
   align-items: center;
   gap: 16px;
+  min-width: 200px;
 `;
 
 const HeaderRight = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 `;
 
 const StyledSider = styled(Sider)`
   background: #fff;
   border-right: 1px solid #e8e8e8;
-  position: relative;
-  z-index: 2;
+  position: fixed;
+  left: 0;
+  top: 64px;
+  bottom: 0;
+  z-index: 999;
+  overflow-y: auto;
+  width: 200px !important;
+  flex-shrink: 0;
+  height: calc(100vh - 64px);
 `;
 
 const StyledContent = styled(Content)`
   background: #fafafa;
-  overflow: hidden;
-  position: relative;
-  z-index: 1;
+  margin-left: 200px;
+  margin-top: 64px;
+  height: calc(100vh - 64px);
+  width: calc(100vw - 200px);
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  box-sizing: border-box;
 `;
 
 const DocumentTitle = styled.div`
   font-size: 16px;
   font-weight: 600;
   color: #333;
+  word-wrap: break-word;
+  word-break: break-word;
+  max-width: 300px;
 `;
 
 const EditorPage: React.FC = () => {

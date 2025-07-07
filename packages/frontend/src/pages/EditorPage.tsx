@@ -13,6 +13,7 @@ import {
 } from '@ant-design/icons';
 import styled from 'styled-components';
 import EnhancedSDSEditor from '../components/editor/EnhancedSDSEditor';
+import HelpSystem from '../components/help/HelpSystem';
 
 const { Header, Sider, Content } = Layout;
 
@@ -68,6 +69,7 @@ const EditorPage: React.FC = () => {
   const [documentContent, setDocumentContent] = useState('');
   const [isTitleModalVisible, setIsTitleModalVisible] = useState(false);
   const [tempTitle, setTempTitle] = useState('');
+  const [helpVisible, setHelpVisible] = useState(false);
 
   // 保存文档
   const handleSave = (content: string) => {
@@ -215,7 +217,7 @@ const EditorPage: React.FC = () => {
           <Button
             icon={<QuestionCircleOutlined />}
             type="text"
-            onClick={() => message.info('SDS编辑器帮助信息')}
+            onClick={() => setHelpVisible(true)}
           >
             帮助
           </Button>
@@ -257,6 +259,12 @@ const EditorPage: React.FC = () => {
           autoFocus
         />
       </Modal>
+
+      {/* 帮助系统 */}
+      <HelpSystem
+        visible={helpVisible}
+        onClose={() => setHelpVisible(false)}
+      />
     </StyledLayout>
   );
 };

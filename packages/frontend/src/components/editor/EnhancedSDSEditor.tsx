@@ -24,8 +24,8 @@ import {
   SaveOutlined,
   UndoOutlined,
   RedoOutlined,
-
-  SettingOutlined
+  SettingOutlined,
+  StrikethroughOutlined
 } from '@ant-design/icons';
 import styled from 'styled-components';
 import SemanticBlockEditor from './SemanticBlockEditor';
@@ -458,10 +458,13 @@ const EnhancedSDSEditor: React.FC<EnhancedSDSEditorProps> = ({
 
   // 切换预览
   const handleTogglePreview = () => {
-    if (!showPreview && editor) {
-      updatePreview(editor.getHTML());
+    if (editor) {
+      if (!showPreview) {
+        // 切换到预览模式，更新预览内容
+        updatePreview(editor.getHTML());
+      }
+      setShowPreview(!showPreview);
     }
-    setShowPreview(!showPreview);
   };
 
   // 插入语义块
@@ -572,7 +575,7 @@ ${form.description || ''}
               type={editor.isActive('italic') ? 'primary' : 'default'}
             />
             <Button
-              icon={<CodeOutlined />}
+              icon={<StrikethroughOutlined />}
               onClick={handleStrike}
               type={editor.isActive('strike') ? 'primary' : 'default'}
             />
